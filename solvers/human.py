@@ -88,6 +88,8 @@ def __fill_by_duplicates__(takuzu):
                     option not in completed
                     and option.count('0') == takuzu.size / 2
                     and option.count('1') == takuzu.size / 2
+                    and '000' not in ''.join(option)
+                    and '111' not in ''.join(option)
                 )
             ]
 
