@@ -101,19 +101,6 @@ class Takuzu(object):
 
         return child
 
-    def get_maximums(self):
-        '''Get the maximum number of 0s/1s in any row/column'''
-
-        counts = {'0': 0, '1': 0}
-
-        for index in range(self.size):
-            counts['0'] = max(counts['0'], self.get(index, None).count('0'))
-            counts['0'] = max(counts['0'], self.get(None, index).count('1'))
-            counts['1'] = max(counts['1'], self.get(index, None).count('0'))
-            counts['1'] = max(counts['1'], self.get(None, index).count('1'))
-
-        return counts
-
     def is_full(self):
         '''If all values have been filled in.'''
 
@@ -141,13 +128,12 @@ class Takuzu(object):
                     return False
 
         # All rows and columns must have the same count of 0s and 1s (but 0s =/= 1s)
-        counts = self.get_maximums()
         for index in range(self.size):
             if (
-                self.get(index, None).count('0') != counts['0']
-                or self.get(index, None).count('1') != counts['1']
-                or self.get(None, index).count('0') != counts['0']
-                or self.get(None, index).count('1') != counts['1']
+                self.get(index, None).count('0') != self.size / 2
+                or self.get(index, None).count('1') != self.size / 2
+                or self.get(None, index).count('0') != self.size / 2
+                or self.get(None, index).count('1') != self.size / 2
             ):
                 return False
 

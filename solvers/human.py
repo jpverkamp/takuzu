@@ -47,26 +47,18 @@ def __third_of_a_kind__(takuzu):
 def __fill_rows__(takuzu):
     '''If we can figure out how many 0s and 1s we need for each and any row/col needs only 0s or 1s, add them'''
 
-    counts = takuzu.get_maximums()
-
-    # If we don't have enough to fill the puzzle, we cannot use this step yet
-    if counts['0'] + counts['1'] < takuzu.size:
-        return False
-
     # Try to fill any rows that have all of the needed 0s/1s but not the other
     for index in range(takuzu.size):
         for row, col in [(index, None), (None, index)]:
             for value in '01':
-                if takuzu.get(row, col).count(value) == counts[value]: # Have enough of 'value'
-                    if takuzu.get(row, col).count(invert(value)) < counts[invert(value)]: # Not enough of the other one
+                if takuzu.get(row, col).count(value) == takuzu.size / 2: # Have enough of 'value'
+                    if takuzu.get(row, col).count(invert(value)) < takuzu.size / 2: # Not enough of the other one
                         return takuzu.set(row, col, invert(value))
 
     return False
 
 def __fill_by_duplicates__(takuzu):
-    '''Fill a puzzle by checking if any rows/cols are near enough to done that only one possibility wouldn't lead to a duplicate.'''
-
-    counts = takuzu.get_maximums()
+    '''Fill a puzzle by checking if any rows/cols are near enough to done that only one possibility is left.'''
 
     # Find all completed rows and cols
     completed_rows = [
@@ -90,8 +82,8 @@ def __fill_by_duplicates__(takuzu):
                 for option in permuate_nones(row_data)
                 if (
                     option not in completed_rows
-                    and option.count('0') == counts['0']
-                    and option.count('1') == counts['1']
+                    and option.count('0') == takuzu.size / 2
+                    and option.count('1') == takuzu.size / 2
                 )
             ]
 
