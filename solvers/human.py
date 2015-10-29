@@ -4,17 +4,17 @@ import solvers.backtracker
 def invert(v):
     return '0' if v == '1' else '1'
 
-def permuate_nones(ls):
+def permute_nones(ls):
     '''Helper function to generate all permutations from filling in 0s and 1s into a list'''
 
     if ls == []:
         yield []
     elif ls[0]:
-        for recur in permuate_nones(ls[1:]):
+        for recur in permute_nones(ls[1:]):
             yield [ls[0]] + recur
     else:
         for value in '01':
-            for recur in permuate_nones(ls[1:]):
+            for recur in permute_nones(ls[1:]):
                 yield [value] + recur
 
 def __third_of_a_kind__(takuzu):
@@ -60,38 +60,49 @@ def __fill_rows__(takuzu):
 def __fill_by_duplicates__(takuzu):
     '''Fill a puzzle by checking if any rows/cols are near enough to done that only one possibility is left.'''
 
-    # Find all completed rows and cols
-    completed_rows = [
-        takuzu.get(row, None)
-        for row in range(takuzu.size)
-        if all(takuzu.get(row, None))
-    ]
+    def row_or_col(which, index):
+        if which == 'row':
+            return takuzu.get(index, None)
+        else:
+            return takuzu.get(None, index)
 
-    # If have neither, this method won't work
-    if completed_rows:
-        for row in range(takuzu.size):
-            row_data = takuzu.get(row, None)
+    for major in ('row', 'col'):
+        # Completed rows/cols have no Nones (so are 'all')
+        completed = filter(all, [
+            row_or_col(major, index)
+            for index in range(takuzu.size)
+        ])
 
-            # Already a complete row, skip it
-            if all(row_data):
+        for index in range(takuzu.size):
+            current = row_or_col(major, index)
+
+            # Already a complete row/col, skip it
+            if all(current):
                 continue
 
             # Generate all posibilities, removing any that we already see
-            possible_options = [
+            possibilities = [
                 option
-                for option in permuate_nones(row_data)
+                for option in permute_nones(current)
                 if (
-                    option not in completed_rows
+                    option not in completed
                     and option.count('0') == takuzu.size / 2
                     and option.count('1') == takuzu.size / 2
                 )
             ]
 
             # If we have exactly one, set that one
-            if len(possible_options) == 1:
-                for col, value in enumerate(possible_options[0]):
-                    takuzu = takuzu.set(row, col, value)
+            if len(possibilities) == 1:
+                for other_index, value in enumerate(possibilities[0]):
+                    if major == 'row':
+                        takuzu = takuzu.set(index, other_index, value)
+                    else:
+                        takuzu = takuzu.set(other_index, index, value)
+
                 return takuzu
+
+    # Never found one
+    return False
 
 RULES = [
     __third_of_a_kind__,
