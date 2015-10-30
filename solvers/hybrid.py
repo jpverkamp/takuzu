@@ -32,7 +32,7 @@ def solve(takuzu):
     # /DEBUG
 
     while queue:
-        takuzu = queue.pop(0)
+        takuzu = queue.pop()
 
         # Solved, we're done!
         if takuzu.is_solved():

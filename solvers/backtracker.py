@@ -19,7 +19,9 @@ def solve(takuzu):
     # /DEBUG
 
     while queue:
-        takuzu = queue.pop(0)
+        takuzu = queue.pop()
+        logging.animate(takuzu)
+        logging.debug('Current board:\n' + str(takuzu).strip())
 
         # Solved, we're done!
         if takuzu.is_solved():
