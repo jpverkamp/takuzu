@@ -46,6 +46,7 @@ def solve(takuzu):
 
         # Try to advance using the human rules until they all fail
         while True:
+            logging.animate(takuzu)
             logging.debug('Current board:\n' + str(takuzu).strip())
             updated = False
             for rule in RULES:

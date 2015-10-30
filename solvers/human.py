@@ -1,3 +1,4 @@
+import config
 import logging
 import solvers.backtracker
 
@@ -117,6 +118,7 @@ def solve(takuzu):
     '''Solve a Takuzu puzzle much as a human would: by applying a series of logical rules.'''
 
     while True:
+        logging.animate(takuzu)
         logging.debug('---------\nCurrent board:\n' + str(takuzu).strip())
         updated = False
 

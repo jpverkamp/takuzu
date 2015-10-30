@@ -1,5 +1,5 @@
 puzzles
-get_puzzles.py
 
 __pycache__
 *.pyc
+*.tsv
