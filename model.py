@@ -111,40 +111,50 @@ class Takuzu(object):
 
         return True
 
-    def is_solved(self):
-        '''Return True iff this puzzle is solved.'''
-
-        # A puzzle that isn't full cannot be solved
-        if not self.is_full():
-            return False
+    def is_valid(self):
+        '''Test if the current is still possibly a valid solution. If it also is_full, the board is solved.'''
 
         # Cannot have three identical numbers in a line
+        # Ignore unset pieces
         for row in range(self.size):
             for col in range(self.size):
+                if not self.get(row, col):
+                    continue
+
                 if self.get(row - 1, col) == self.get(row, col) == self.get(row + 1, col):
                     return False
 
                 if self.get(row, col - 1) == self.get(row, col) == self.get(row, col + 1):
                     return False
 
-        # All rows and columns must have the same count of 0s and 1s (but 0s =/= 1s)
+        # All rows and columns must have no more than the maximum (size/2) number of 0s or 1s
         for index in range(self.size):
             if (
-                self.get(index, None).count('0') != self.size / 2
-                or self.get(index, None).count('1') != self.size / 2
-                or self.get(None, index).count('0') != self.size / 2
-                or self.get(None, index).count('1') != self.size / 2
+                self.get(index, None).count('0') > self.size / 2
+                or self.get(index, None).count('1') > self.size / 2
+                or self.get(None, index).count('0') > self.size / 2
+                or self.get(None, index).count('1') > self.size / 2
             ):
                 return False
 
-        # No two rows or columns can be equal
+        # No two rows or columns can be equal (ignore rows/columns that contain unset values)
+        # all(...) on a row or column will be true iff all values are set
         for first_index in range(self.size):
             for second_index in range(first_index):
                 if (
-                    self.get(first_index, None) == self.get(second_index, None)
-                    or self.get(None, first_index) == self.get(None, second_index)
+                    all(self.get(first_index, None))
+                    and all(self.get(None, first_index))
+                    and (
+                        self.get(first_index, None) == self.get(second_index, None)
+                        or self.get(None, first_index) == self.get(None, second_index)
+                    )
                 ):
                     return False
 
         # Whee passed all three conditions!
         return True
+
+    def is_solved(self):
+        '''Return True iff this puzzle is solved.'''
+
+        return self.is_full() and self.is_valid()

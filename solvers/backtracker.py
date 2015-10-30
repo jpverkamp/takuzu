@@ -25,10 +25,8 @@ def solve(takuzu):
         if takuzu.is_solved():
             return takuzu
 
-        # TODO: Add a case for not full but invalid
-
-        # Not solved, but full: invalid solution
-        if takuzu.is_full():
+        # If we don't have a valid solution, stop looking on this branch
+        if not takuzu.is_valid():
             continue
 
         # Otherwise, find one empty spot and try both possiblities
